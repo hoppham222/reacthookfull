@@ -6,6 +6,7 @@ import * as actions from "../../store/actions";
 
 import './Login.scss';
 import { FormattedMessage } from 'react-intl';
+import  { handleLogin }  from '../../services/UserServices';
 
 
 class Login extends Component {
@@ -13,7 +14,8 @@ class Login extends Component {
         super(props);
         this.state = {
             username:'',
-            password:'',
+            password: '',
+            isshowpass: false,
         }
     }
 
@@ -21,7 +23,29 @@ class Login extends Component {
         this.setState({
             username:event.target.value
         })
-        console.log(event.target.value)
+    }
+
+    handleOnChangepass = (event) => {
+        this.setState({
+            password:event.target.value
+        })
+    }
+
+    handleOnClick = async () => {
+        console.log(this.state.username, 'pass', this.state.password)
+        try {
+            await handleLogin(this.state.username, this.state.password);
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }
+
+    handleShowgidePassword = () => {
+        this.setState({
+            isshowpass: !this.state.isshowpass
+        })
+        
     }
 
     render() {
@@ -37,11 +61,16 @@ class Login extends Component {
                           />
                       </div>
                       <div className=' col-12 form-group'>
-                          <label>Password</label>
-                          <input type='password' className='form-control' />
+                            <label>Password</label>
+                            <div className='pass-worrd'>
+                                <input type={this.state.isshowpass ? 'text': 'password'} className='form-control' placeholder='password' value={this.state.password}
+                                    onChange={(event) => this.handleOnChangepass(event)}
+                                />
+                                <div onClick={()=> {this.handleShowgidePassword()}}>Hiện</div>
+                            </div>
                       </div>
                       <div className='col-12'>
-                      <button>Login</button>
+                      <button className='btn' onClick={(event) => this.handleOnClick()}>Login</button>
                       </div>
                       <div className='col-12'>
                           <span className='forgot-password'>Forgot your password</span>
